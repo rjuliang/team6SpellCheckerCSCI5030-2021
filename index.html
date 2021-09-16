@@ -1,0 +1,52 @@
+<html>
+    <head>
+        
+    </head>
+    <body>
+        <form id="myForm" onsubmit="sendText(spellText)" >
+            <textarea name="spellText" id="text" cols="30" rows="10"></textarea>
+           <input type="submit">
+          </form>
+          <div id="suggestions"></div>
+
+          
+    </body>
+    <script>
+
+        var form = document.getElementById("myForm");
+        function handleForm(event) { event.preventDefault(); } 
+        form.addEventListener('submit', handleForm);
+
+        function sendText(text){
+            document.getElementById("suggestions").innerHTML = "";
+            var value = document.getElementById("text").value;
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "http://localhost:8080/check?spellText="+value, false);            
+            xhttp.send();
+            console.log(xhttp.responseText);
+            var response = JSON.parse(xhttp.responseText);
+            document.getElementById("text").value = response.phrase;
+            var suggestionsLength =  response.suggestions.length;
+
+            if(suggestionsLength > 0){
+                document.getElementById("suggestions").innerHTML += "<p>This words are misspelled:<br>";
+
+                for(var y = 0; y<suggestionsLength; y++){
+                    document.getElementById("suggestions").innerHTML += response.suggestions[y].word+"<br>";
+                }
+
+                document.getElementById("suggestions").innerHTML += "<br> This are the suggestions: <br>";
+                for(var z = 0; z<suggestionsLength; z++){
+                    document.getElementById("suggestions").innerHTML += response.suggestions[z].word+ ": "+response.suggestions[z].suggestions+"<br>";
+                }
+
+                document.getElementById("suggestions").innerHTML += "</p>";
+            } else {
+                document.getElementById("suggestions").innerHTML = "<p>There are no individual incorrect words in the phrase</p>"
+            }
+            
+            
+        }
+        
+    </script>
+</html>

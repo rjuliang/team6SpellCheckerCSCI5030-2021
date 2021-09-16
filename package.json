@@ -1,0 +1,19 @@
+{
+  "name": "myapp",
+  "version": "1.0.0",
+  "description": "test project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Julian",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dictionary-en": "^3.1.0",
+    "express": "^4.17.1",
+    "hunspell-spellchecker": "^1.0.2",
+    "typo-js": "^1.2.0"
+  }
+}
