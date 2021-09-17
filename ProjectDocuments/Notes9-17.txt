@@ -1,0 +1,7 @@
+1. No submit button - Pream & Julian
+2. Find alternatives in Python/back end | Research web frameworks
+	- how to create a localhost/endpoint on python - communication with javascript/front-end - Kimaya && Manasa
+	- spell check correction context - Julian
+	- Flask | Django | Ajax - Kimaya && Manasa
+3. Using actual hunspell - pending
+4. Front End modification - pending
