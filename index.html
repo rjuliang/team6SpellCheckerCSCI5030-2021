@@ -1,52 +1,140 @@
 <html>
     <head>
-        
+        <style>
+
+            /*This is to underline the incorrect word*/
+            .red_line{
+                text-decoration: underline;
+                text-decoration-color: red;
+            }
+
+            /*These are the properties to add the border and height of the box*/
+            #input{
+                    border: 1px solid #ddd;
+                    height: 200px;
+            }
+
+            
+        </style>
     </head>
     <body>
-        <form id="myForm" onsubmit="sendText(spellText)" >
-            <textarea name="spellText" id="text" cols="30" rows="10"></textarea>
-           <input type="submit">
-          </form>
-          <div id="suggestions"></div>
-
-          
-    </body>
+          <!-- This is the new box we are using instead of the form -->
+          <div contenteditable="true" id="input" class="original"></div>          
+    </body>    
+    <!--This is the script tag we call so our jQuery code works-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
 
-        //This is a change is develop
-//Develope CHanges
-        //MAKE SURE THIS WORK
-        var form = document.getElementById("myForm");
-        function handleForm(event) { event.preventDefault(); } 
-        form.addEventListener('submit', handleForm);
-
-        function sendText(text){
-            document.getElementById("suggestions").innerHTML = "";
-            var value = document.getElementById("text").value;
-            var xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "http://localhost:8080/check?spellText="+value, false);            
-            xhttp.send();
-            console.log(xhttp.responseText);
-            var response = JSON.parse(xhttp.responseText);
-            document.getElementById("text").value = response.phrase;
-            var suggestionsLength =  response.suggestions.length;
-
-            if(suggestionsLength > 0){
-                document.getElementById("suggestions").innerHTML += "<p>This words are misspelled:<br>";
-
-                for(var y = 0; y<suggestionsLength; y++){
-                    document.getElementById("suggestions").innerHTML += response.suggestions[y].word+"<br>";
-                }
-
-                document.getElementById("suggestions").innerHTML += "<br> This are the suggestions: <br>";
-                for(var z = 0; z<suggestionsLength; z++){
-                    document.getElementById("suggestions").innerHTML += response.suggestions[z].word+ ": "+response.suggestions[z].suggestions+"<br>";
-                }
-
-                document.getElementById("suggestions").innerHTML += "</p>";
-            } else {
-                document.getElementById("suggestions").innerHTML = "<p>There are no individual incorrect words in the phrase</p>"
+        //Triggering the word correction on spacekey press from the fkeyboard
+        document.body.onkeyup = function(e){
+            if(e.keyCode == 32){
+                console.log('keyboard pressed', document.getElementById("input").innerText);
+                var spellText = document.getElementById("input").innerText;
+                if(spellText != '' && spellText != null)
+                    sendText(spellText); // We trigger the function here
             }
+        }
+
+        //The following is a jQuery function to allow the cursor to be placed at the end of the string always
+        $.fn.focusEnd = function() {
+                $(this).focus();
+                var tmp = $('<span />').appendTo($(this)),
+                    node = tmp.get(0),
+                    range = null,
+                    sel = null;
+
+                if (document.selection) {
+                    range = document.body.createTextRange();
+                    range.moveToElementText(node);
+                    range.select();
+                } else if (window.getSelection) {
+                    range = document.createRange();
+                    range.selectNode(node);
+                    sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+                tmp.remove();
+                return this;
+            }
+        
+        //function (fn) to underline words
+        function getRedLines (incorrectWords){
+            var newHTML = "";
+            $('#input').text().replace(/[\s]+/g, " ").trim().split(" ").forEach(function(val, idx){
+            // If word is statement
+            if (incorrectWords.indexOf(val.trim()) > -1)
+                newHTML += "<span class='red_line'>" + val + "&nbsp;</span>";
+            else
+                newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
+            });
+            console.log('newHTML',newHTML);
+            $('#input').html(newHTML);
+            $('#input').focusEnd();
+        }
+
+
+        //MAIN function to reach out to the server
+        function sendText(text){
+            //First, we define the value from the text, to allow better usage of variables
+            var value = text;
+            
+            //Then, we divide the words into an array 
+            var wordsArray = value.split(/\s/);
+
+            //Third, we use the fetch method to call the localhost asynchronously (Synchronously was not recommended)
+            //This is where we get the results from the index.js file
+            fetch("http://localhost:8080/check?spellText="+value, {
+                method: 'GET'
+            }).then(prior =>  prior.json()).then(
+                final => {
+                    //At this point the index.js file responded and we have a response body
+                    console.log(final);
+
+                    //We get our response in a variable
+                    var response = final;
+                      
+                    //get the length to the suggestions array returned
+                    var suggestionsLength =  response.suggestions.length;
+
+                    //created a new array and populated it with the list of incorrect words
+                    var incorrectWords = [];
+                    for(var x= 0; x<suggestionsLength; x++){
+                        incorrectWords.push(response.suggestions[x].word);
+                    }
+
+
+                    console.log('wordsArray: ',wordsArray);
+
+
+                    //trigger the function to get the red lines show up or disappear
+                    getRedLines(incorrectWords);
+
+                    
+
+                    //Suggestion text left here as we may need it later
+                    // if(suggestionsLength > 0){
+                    //     document.getElementById("suggestions").innerHTML += "<p>These words are misspelled:<br>";
+
+                    //     for(var y = 0; y<suggestionsLength; y++){
+                    //         document.getElementById("suggestions").innerHTML += response.suggestions[y].word+"<br>";
+                    //     }
+
+                    //     document.getElementById("suggestions").innerHTML += "<br> This are the suggestions: <br>";
+                    //     for(var z = 0; z<suggestionsLength; z++){
+                    //         document.getElementById("suggestions").innerHTML += response.suggestions[z].word+ ": "+response.suggestions[z].suggestions+"<br>";
+                    //     }
+
+                    //     document.getElementById("suggestions").innerHTML += "</p>";
+                    // } else {
+                    //     document.getElementById("suggestions").innerHTML = "<p>There are no individual incorrect words in the phrase</p>"
+                    // }
+                }
+            ).catch(function(error){
+                //TODO: work on an error response
+            })
+
+            
             
             
         }
