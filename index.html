@@ -24,7 +24,6 @@
     <!--This is the script tag we call so our jQuery code works-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
-
         //Triggering the word correction on spacekey press from the fkeyboard
         document.body.onkeyup = function(e){
             if(e.keyCode == 32){
@@ -42,7 +41,6 @@
                     node = tmp.get(0),
                     range = null,
                     sel = null;
-
                 if (document.selection) {
                     range = document.body.createTextRange();
                     range.moveToElementText(node);
