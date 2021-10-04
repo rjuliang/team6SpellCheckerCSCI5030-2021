@@ -1,6 +1,7 @@
 <html>
     <head>
 
+
         <style>
             /*This applies to the entire page*/
             body{
@@ -8,6 +9,7 @@
                 background-color: rgb(126, 126, 126);
                 color: white;
             }
+
 
             /*This is to underline the incorrect word*/
             .red_line{
@@ -52,11 +54,10 @@
         <!-- This is the new box we are using instead of the form -->
         <div contenteditable="true" id="input" class="center"></div>
         <br><br> 
-        </div>         
-    </body>    
+     </div>         
+    </body>       
     <!--This is the script tag we call so our jQuery code works-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    
     <script>
         //Triggering the word correction on spacekey press from the fkeyboard
         document.body.onkeyup = function(e){
@@ -137,8 +138,6 @@
 
 
                     console.log('wordsArray: ',wordsArray);
-
-
                     //trigger the function to get the red lines show up or disappear
                     getRedLines(incorrectWords);
 
