@@ -1,6 +1,15 @@
 <html>
     <head>
+
+
         <style>
+            /*This applies to the entire page*/
+            body{
+                font-family: Garamond, serif;;
+                background-color: rgb(126, 126, 126);
+                color: white;
+            }
+
 
             /*This is to underline the incorrect word*/
             .red_line{
@@ -10,17 +19,43 @@
 
             /*These are the properties to add the border and height of the box*/
             #input{
-                    border: 1px solid #ddd;
-                    height: 200px;
+                border: 1px solid rgb(95, 93, 93);
+                border-width: 4px;
+                height: 200px;
+                width: 80%; 
+                margin: auto;         
+            }
+            
+            /*These are the properties to align the heading of the page*/
+            .heading {
+                margin: auto;
+                padding-left: 150px;
             }
 
-            
+            /*These are the properties to set the style of the outline box
+            .border {
+                margin: auto;
+                border-style:solid;
+                border-width: 5px;
+                width: 90%;
+                border-color: rgb(56, 54, 145);
+            }
+    */
         </style>
     </head>
-    <body>
-          <!-- This is the new box we are using instead of the form -->
-          <div contenteditable="true" id="input" class="original"></div>          
-    </body>    
+    <br>
+    <div class="border">
+        <div class="heading">
+            <br>
+            <h1>Spell Checker</h1>
+            <font size="5px"> Enter your text below:</font>
+        </div>
+        <br>
+        <!-- This is the new box we are using instead of the form -->
+        <div contenteditable="true" id="input" class="center"></div>
+        <br><br> 
+     </div>         
+    </body>       
     <!--This is the script tag we call so our jQuery code works-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
@@ -103,8 +138,6 @@
 
 
                     console.log('wordsArray: ',wordsArray);
-
-
                     //trigger the function to get the red lines show up or disappear
                     getRedLines(incorrectWords);
 
