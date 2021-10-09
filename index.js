@@ -25,7 +25,7 @@ function spellCheck(phrase){
 
   let misspelledWords = [];
   let suggestions = [];
-  console.log('This is where I am getting the error')
+  
   if(arrayPhrase != null && arrayPhrase.length > 0){
     for(let x = 0; x<arrayPhrase.length; x++){
       let word = arrayPhrase[x];
