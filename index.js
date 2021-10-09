@@ -7,47 +7,52 @@ const Typo = require("typo-js");
 const bodyParser = require('body-parser');
 const app = express();
 
-var cors = require('cors')
+let cors = require('cors')
 app.use(cors())
 
 
 
 function separate(str) {
-  var myRegex = /[a-z0-9']+/gi;
-  var words = str.match(myRegex);
+  let myRegex = /[a-z0-9']+/gi;
+  let words = str.match(myRegex);
   return words;
 }
 
 function spellCheck(phrase){
-  var arrayPhrase = separate(phrase); 
+  let arrayPhrase = separate(phrase); 
 
-  var dictionary = new Typo('en_US');
+  let dictionary = new Typo('en_US');
 
-  var misspelledWords = [];
-  var suggestions = [];
-
-  for(var x = 0; x<arrayPhrase.length; x++){
-    var word = arrayPhrase[x];
-    var is_spelled_correctly = dictionary.check(word);
-    if(!is_spelled_correctly){
-      misspelledWords.push(word);
-      var array_of_suggestions = dictionary.suggest(word);
-      suggestions.push({
-        word: word,
-        suggestions: array_of_suggestions
-      })
+  let misspelledWords = [];
+  let suggestions = [];
+  console.log('This is where I am getting the error')
+  if(arrayPhrase != null && arrayPhrase.length > 0){
+    for(let x = 0; x<arrayPhrase.length; x++){
+      let word = arrayPhrase[x];
+      let is_spelled_correctly = dictionary.check(word);
+      if(!is_spelled_correctly){
+        misspelledWords.push(word);
+        let array_of_suggestions = dictionary.suggest(word);
+        suggestions.push({
+          word: word,
+          suggestions: array_of_suggestions
+        })
+      }
+    
     }
-  
   }
+  
 
   return suggestions;
 }
 
 app.get('/check', (req, res) => {
   const phrase = req.query.spellText;
-  console.log(phrase);
-  var h = spellCheck(phrase);
-  res.json({phrase: phrase, suggestions: h});
+  if(phrase != null && phrase != ""){
+    console.log(phrase);
+    let h = spellCheck(phrase);
+    res.json({phrase: phrase, suggestions: h});
+  }
 });
 
 const port = 8080;

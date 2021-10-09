@@ -64,8 +64,9 @@
             if(e.keyCode == 32){
                 console.log('keyboard pressed', document.getElementById("input").innerText);
                 var spellText = document.getElementById("input").innerText;
-                if(spellText != '' && spellText != null)
+                if(spellText != "" && spellText != null){
                     sendText(spellText); // We trigger the function here
+                }
             }
         }
 
