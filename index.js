@@ -36,7 +36,7 @@ function spellCheck(phrase){
         word: word,
         suggestions: array_of_suggestions
       })
-    }
+    } 
   
   }
 
