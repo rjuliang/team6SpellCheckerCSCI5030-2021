@@ -44,6 +44,7 @@
         </style>
     </head>
     <br>
+    <body>
     <div class="border">
         <div class="heading">
             <br>
@@ -54,7 +55,8 @@
         <!-- This is the new box we are using instead of the form -->
         <div contenteditable="true" id="input" class="center"></div>
         <br><br> 
-     </div>         
+        <div id="suggestions"></div>
+     </div>
     </body>       
     <!--This is the script tag we call so our jQuery code works-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -97,7 +99,7 @@
             $('#input').text().replace(/[\s]+/g, " ").trim().split(" ").forEach(function(val, idx){
             // If word is statement
             if (incorrectWords.indexOf(val.trim()) > -1)
-                newHTML += "<span class='red_line'>" + val + "&nbsp;</span>";
+                newHTML += "<span id='"+val+"'class='red_line'>" + val + "&nbsp;</span>";
             else
                 newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
             });
@@ -106,10 +108,26 @@
             $('#input').focusEnd();
         }
 
+        //
+        function loadSuggestion(ele,txtword,len){
+            var txt = ele.innerHTML;
+            if(len>1) {
+                let actualpara = document.getElementById("input").innerHTML;
+                document.getElementById("input").innerHTML =  actualpara.replace(txtword,txt);
 
+            } else {
+                var actualpara =  document.getElementById("input").innerHTML;
+                document.getElementById("input").innerHTML =  actualpara.replace(txtword,txt);
+
+            }
+
+          //  document.getElementById("text").value = '';
+        
+        }
         //MAIN function to reach out to the server
         function sendText(text){
             //First, we define the value from the text, to allow better usage of variables
+            document.getElementById("suggestions").innerHTML="";
             var value = text;
             
             //Then, we divide the words into an array 
@@ -144,23 +162,50 @@
                     
 
                     //Suggestion text left here as we may need it later
-                    // if(suggestionsLength > 0){
-                    //     document.getElementById("suggestions").innerHTML += "<p>These words are misspelled:<br>";
+                    
+                //      if(suggestionsLength > 0){
+                //        document.getElementById("suggestions").innerHTML += "<p>These words are misspelled:<br>";
 
-                    //     for(var y = 0; y<suggestionsLength; y++){
-                    //         document.getElementById("suggestions").innerHTML += response.suggestions[y].word+"<br>";
-                    //     }
+                //         for(var y = 0; y<suggestionsLength; y++){
+                //              document.getElementById("suggestions").innerHTML += response.suggestions[y].word+"<br>";
+                //         }
 
-                    //     document.getElementById("suggestions").innerHTML += "<br> This are the suggestions: <br>";
-                    //     for(var z = 0; z<suggestionsLength; z++){
-                    //         document.getElementById("suggestions").innerHTML += response.suggestions[z].word+ ": "+response.suggestions[z].suggestions+"<br>";
-                    //     }
+                //          document.getElementById("suggestions").innerHTML += "<br> This are the suggestions: <br>";
+                //          for(var z = 0; z<suggestionsLength; z++){
+                //             document.getElementById("suggestions").innerHTML += response.suggestions[z].word+ ": "+response.suggestions[z].suggestions+"<br>";
+                //         }
 
-                    //     document.getElementById("suggestions").innerHTML += "</p>";
-                    // } else {
-                    //     document.getElementById("suggestions").innerHTML = "<p>There are no individual incorrect words in the phrase</p>"
-                    // }
+                //          document.getElementById("suggestions").innerHTML += "</p>";
+                //      } else {
+                //          document.getElementById("suggestions").innerHTML = "<p>There are no individual incorrect words in the phrase</p>"
+                //      }
+                if(suggestionsLength > 0){
+                document.getElementById("suggestions").innerHTML += "<p>This words are misspelled:<br>";
+                    for(var y = 0; y<suggestionsLength; y++){
+                    document.getElementById("suggestions").innerHTML += response.suggestions[y].word+"<br>";
                 }
+
+                document.getElementById("suggestions").innerHTML += "<br> This are the suggestions: <br>";
+                
+                for(var z = 0; z<suggestionsLength; z++){
+                    document.getElementById("suggestions").innerHTML += response.suggestions[z].word+ ":<br>";
+                    const k=response.suggestions[z].suggestions;
+                    var l = response.suggestions[z].word;
+                    for(var i=0;i<k.length;i++){    
+                        document.getElementById("suggestions").innerHTML += '<a style="cursor:pointer;text-decoration:underline;color:blue;" onclick="loadSuggestion(this,\''+l+'\',\''+suggestionsLength+'\')">'+k[i]+"</a> ";
+                    }
+                    document.getElementById("suggestions").innerHTML += "<br>";
+                }
+
+                document.getElementById("suggestions").innerHTML += "</p>";
+            } else {
+                document.getElementById("suggestions").innerHTML = "<p>There are no individual incorrect words in the phrase</p>"
+            }
+            
+            
+    
+                
+                 }
             ).catch(function(error){
                 //TODO: work on an error response
             })
