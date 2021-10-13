@@ -4,3 +4,4 @@ https://stackoverflow.com/questions/37139076/change-color-of-specific-words-in-t
 https://esstudio.site/2018/10/22/javascript-spellingchecker.html
 https://www.codecademy.com/learn/fscp-async-javascript-and-http-requests/modules/fecp-learn-javascript-requests/cheatsheet
 https://stackoverflow.com/questions/32389568/search-for-a-string-from-a-textbox-in-a-textarea
+https://www.geeksforgeeks.org/how-to-add-a-custom-right-click-menu-to-a-webpage/

@@ -15,15 +15,19 @@
             .red_line{
                 text-decoration: underline;
                 text-decoration-color: red;
+                -webkit-text-decoration-style: wavy;
+                text-decoration-style: wavy;
+                /* -webkit-text-underline-position: under;
+                text-underline-position: under; */
             }
 
             /*These are the properties to add the border and height of the box*/
-            #input{
-                border: 1px solid rgb(95, 93, 93);
+            #input{                
+                border: 1px solid rgb(95, 93, 93);              
                 border-width: 4px;
                 height: 200px;
                 width: 80%; 
-                margin: auto;         
+                margin: auto;       
             }
             
             /*These are the properties to align the heading of the page*/
@@ -40,21 +44,57 @@
                 width: 90%;
                 border-color: rgb(56, 54, 145);
             }
-    */
+    */      
+
+            /**The following is the css properties of the custom right click menu
+            * This was researched from https://www.geeksforgeeks.org/how-to-add-a-custom-right-click-menu-to-a-webpage/
+            * Thanks to @devansh07 for writing the article that provided it.
+            */
+            .context-menu {
+                position: absolute;
+                text-align: center;
+                background: #f9f6f6;
+                border: 1px solid #7e7e7e;
+                border-radius: 3px;
+            }
+    
+            .context-menu ul {
+                padding: 0px;
+                margin: 0px;
+                min-width: 150px;
+                list-style: none;
+            }
+    
+            .context-menu ul li {
+                padding-bottom: 7px;
+                padding-top: 7px;
+                cursor: pointer;
+            }
+    
+            .context-menu ul li a {
+                text-decoration: none;
+                color: black;
+            }
+    
+            .context-menu ul li:hover {
+                background: rgb(204, 204, 204);
+            }
         </style>
     </head>
     <br>
+    <body>
     <div class="border">
         <div class="heading">
             <br>
             <h1>Spell Checker</h1>
-            <font size="5px"> Enter your text below:</font>
+            <p size="5px"> Enter your text below:</p>
         </div>
         <br>
         <!-- This is the new box we are using instead of the form -->
         <div contenteditable="true" id="input" class="center"></div>
         <br><br> 
-     </div>         
+        <div id="contextMenu" class="context-menu" style="display:none"></div>
+     </div>
     </body>       
     <!--This is the script tag we call so our jQuery code works-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -97,15 +137,14 @@
             $('#input').text().replace(/[\s]+/g, " ").trim().split(" ").forEach(function(val, idx){
             // If word is statement
             if (incorrectWords.indexOf(val.trim()) > -1)
-                newHTML += "<span class='red_line'>" + val + "&nbsp;</span>";
+                newHTML += "<span id='"+val+"'class='red_line'>" + val + "&nbsp;</span>";
             else
-                newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
+                newHTML += ""+val+" "; 
             });
-            console.log('newHTML',newHTML);
+            //console.log('newHTML',newHTML);
             $('#input').html(newHTML);
             $('#input').focusEnd();
         }
-
 
         //MAIN function to reach out to the server
         function sendText(text){
@@ -137,30 +176,30 @@
                     }
 
 
+                    var suggestions = response.suggestions;
+                    
                     console.log('wordsArray: ',wordsArray);
                     //trigger the function to get the red lines show up or disappear
                     getRedLines(incorrectWords);
 
-                    
+                    for(let z = 0; z < suggestionsLength; z++){                                    
+                        let originalWord = suggestions[z].word;                    
+                        let suggestionsForWordOne = suggestions[z].suggestions;                    
+                        document.getElementById(suggestions[z].word).onmousedown = function(event) {
+                            let suggestionsForWord = suggestions[z].suggestions                            
+                            if (event.which == 3) {                            
+                                $('#contextMenu').append('<ul id="wordList"></ul>');                                                       
+                                for(let u = 0; u < suggestionsForWord.length; u++){
+                                    let individualSuggestion = suggestionsForWord[u];
+                                    $('#wordList').append("<li onclick=\"changeWord('"+originalWord+"','"+individualSuggestion+"')\">"+individualSuggestion+'</li>');
+                                } 
+                                
+                            }
+                        }
+                    }
 
-                    //Suggestion text left here as we may need it later
-                    // if(suggestionsLength > 0){
-                    //     document.getElementById("suggestions").innerHTML += "<p>These words are misspelled:<br>";
-
-                    //     for(var y = 0; y<suggestionsLength; y++){
-                    //         document.getElementById("suggestions").innerHTML += response.suggestions[y].word+"<br>";
-                    //     }
-
-                    //     document.getElementById("suggestions").innerHTML += "<br> This are the suggestions: <br>";
-                    //     for(var z = 0; z<suggestionsLength; z++){
-                    //         document.getElementById("suggestions").innerHTML += response.suggestions[z].word+ ": "+response.suggestions[z].suggestions+"<br>";
-                    //     }
-
-                    //     document.getElementById("suggestions").innerHTML += "</p>";
-                    // } else {
-                    //     document.getElementById("suggestions").innerHTML = "<p>There are no individual incorrect words in the phrase</p>"
-                    // }
-                }
+                
+                 }
             ).catch(function(error){
                 //TODO: work on an error response
             })
@@ -168,6 +207,41 @@
             
             
             
+        }
+
+        function changeWord (wordMisspelled, correction){
+            document.getElementById(wordMisspelled).textContent = correction + " ";
+            $('#'+wordMisspelled).removeClass('red_line').addClass('other');
+            $('#'+wordMisspelled).focusEnd();
+        }
+
+
+        /**
+         * The following code was researched from https://www.geeksforgeeks.org/how-to-add-a-custom-right-click-menu-to-a-webpage/
+         * Thanks to @devansh07 for writing the article that provided it.
+        */
+        document.onclick = hideMenu;
+        document.oncontextmenu = rightClick;
+  
+        function hideMenu() {
+            document.getElementById("contextMenu").style.display = "none"
+            document.getElementById("contextMenu").innerHTML = "";
+        }
+  
+        function rightClick(e) {
+            e.preventDefault();
+  
+            if (document.getElementById(
+                "contextMenu").style.display == "block")
+                hideMenu();
+            else {
+                var menu = document
+                    .getElementById("contextMenu")
+                      
+                menu.style.display = 'block';
+                menu.style.left = e.pageX + "px";
+                menu.style.top = e.pageY + "px";
+            }
         }
         
     </script>
