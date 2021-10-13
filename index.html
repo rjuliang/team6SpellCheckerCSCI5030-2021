@@ -1,54 +1,247 @@
 <html>
     <head>
-        
-    </head>
-    <body>
-        <form id="myForm" onsubmit="sendText(spellText)" >
-            <textarea name="spellText" id="text" cols="30" rows="10"></textarea>
-           <input type="submit">
-          </form>
-          <div id="suggestions"></div>
 
-          
-    </body>
-    <script>
 
-        //This is a change is develop
+        <style>
+            /*This applies to the entire page*/
+            body{
+                font-family: Garamond, serif;;
+                background-color: rgb(126, 126, 126);
+                color: white;
+            }
 
-        //MAKE SURE THIS WORK
-        var form = document.getElementById("myForm");
-        function handleForm(event) { event.preventDefault(); } 
-        form.addEventListener('submit', handleForm);
 
-        function sendText(text){
-            document.getElementById("suggestions").innerHTML = "";
-            var value = document.getElementById("text").value;
-            var xhttp = new XMLHttpRequest();
-            xhttp.open("GET", "http://localhost:8080/check?spellText="+value, false);            
-            xhttp.send();
-            console.log(xhttp.responseText);
-            var response = JSON.parse(xhttp.responseText);
-            document.getElementById("text").value = response.phrase;
-            var suggestionsLength =  response.suggestions.length;
+            /*This is to underline the incorrect word*/
+            .red_line{
+                text-decoration: underline;
+                text-decoration-color: red;
+                -webkit-text-decoration-style: wavy;
+                text-decoration-style: wavy;
+                /* -webkit-text-underline-position: under;
+                text-underline-position: under; */
+            }
 
-            if(suggestionsLength > 0){
-                document.getElementById("suggestions").innerHTML += "<p>This words are misspelled:<br>";
-
-                for(var y = 0; y<suggestionsLength; y++){
-                    document.getElementById("suggestions").innerHTML += response.suggestions[y].word+"<br>";
-                }
-
-                document.getElementById("suggestions").innerHTML += "<br> This are the suggestions: <br>";
-                for(var z = 0; z<suggestionsLength; z++){
-                    document.getElementById("suggestions").innerHTML += response.suggestions[z].word+ ": "+response.suggestions[z].suggestions+"<br>";
-                }
-
-                document.getElementById("suggestions").innerHTML += "</p>";
-            } else {
-                document.getElementById("suggestions").innerHTML = "<p>There are no individual incorrect words in the phrase</p>"
+            /*These are the properties to add the border and height of the box*/
+            #input{                
+                border: 1px solid rgb(95, 93, 93);              
+                border-width: 4px;
+                height: 200px;
+                width: 80%; 
+                margin: auto;       
             }
             
+            /*These are the properties to align the heading of the page*/
+            .heading {
+                margin: auto;
+                padding-left: 150px;
+            }
+
+            /*These are the properties to set the style of the outline box
+            .border {
+                margin: auto;
+                border-style:solid;
+                border-width: 5px;
+                width: 90%;
+                border-color: rgb(56, 54, 145);
+            }
+    */      
+
+            /**The following is the css properties of the custom right click menu
+            * This was researched from https://www.geeksforgeeks.org/how-to-add-a-custom-right-click-menu-to-a-webpage/
+            * Thanks to @devansh07 for writing the article that provided it.
+            */
+            .context-menu {
+                position: absolute;
+                text-align: center;
+                background: #f9f6f6;
+                border: 1px solid #7e7e7e;
+                border-radius: 3px;
+            }
+    
+            .context-menu ul {
+                padding: 0px;
+                margin: 0px;
+                min-width: 150px;
+                list-style: none;
+            }
+    
+            .context-menu ul li {
+                padding-bottom: 7px;
+                padding-top: 7px;
+                cursor: pointer;
+            }
+    
+            .context-menu ul li a {
+                text-decoration: none;
+                color: black;
+            }
+    
+            .context-menu ul li:hover {
+                background: rgb(204, 204, 204);
+            }
+        </style>
+    </head>
+    <br>
+    <body>
+    <div class="border">
+        <div class="heading">
+            <br>
+            <h1>Spell Checker</h1>
+            <p size="5px"> Enter your text below:</p>
+        </div>
+        <br>
+        <!-- This is the new box we are using instead of the form -->
+        <div contenteditable="true" id="input" class="center"></div>
+        <br><br> 
+        <div id="contextMenu" class="context-menu" style="display:none"></div>
+     </div>
+    </body>       
+    <!--This is the script tag we call so our jQuery code works-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        //Triggering the word correction on spacekey press from the fkeyboard
+        document.body.onkeyup = function(e){
+            if(e.keyCode == 32){
+                console.log('keyboard pressed', document.getElementById("input").innerText);
+                var spellText = document.getElementById("input").innerText;
+                if(spellText != '' && spellText != null)
+                    sendText(spellText); // We trigger the function here
+            }
+        }
+
+        //The following is a jQuery function to allow the cursor to be placed at the end of the string always
+        $.fn.focusEnd = function() {
+                $(this).focus();
+                var tmp = $('<span />').appendTo($(this)),
+                    node = tmp.get(0),
+                    range = null,
+                    sel = null;
+                if (document.selection) {
+                    range = document.body.createTextRange();
+                    range.moveToElementText(node);
+                    range.select();
+                } else if (window.getSelection) {
+                    range = document.createRange();
+                    range.selectNode(node);
+                    sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+                tmp.remove();
+                return this;
+            }
+        
+        //function (fn) to underline words
+        function getRedLines (incorrectWords){
+            var newHTML = "";
+            $('#input').text().replace(/[\s]+/g, " ").trim().split(" ").forEach(function(val, idx){
+            // If word is statement
+            if (incorrectWords.indexOf(val.trim()) > -1)
+                newHTML += "<span id='"+val+"'class='red_line'>" + val + "&nbsp;</span>";
+            else
+                newHTML += ""+val+" "; 
+            });
+            //console.log('newHTML',newHTML);
+            $('#input').html(newHTML);
+            $('#input').focusEnd();
+        }
+
+        //MAIN function to reach out to the server
+        function sendText(text){
+            //First, we define the value from the text, to allow better usage of variables
+            var value = text;
             
+            //Then, we divide the words into an array 
+            var wordsArray = value.split(/\s/);
+
+            //Third, we use the fetch method to call the localhost asynchronously (Synchronously was not recommended)
+            //This is where we get the results from the index.js file
+            fetch("http://localhost:8080/check?spellText="+value, {
+                method: 'GET'
+            }).then(prior =>  prior.json()).then(
+                final => {
+                    //At this point the index.js file responded and we have a response body
+                    console.log(final);
+
+                    //We get our response in a variable
+                    var response = final;
+                      
+                    //get the length to the suggestions array returned
+                    var suggestionsLength =  response.suggestions.length;
+
+                    //created a new array and populated it with the list of incorrect words
+                    var incorrectWords = [];
+                    for(var x= 0; x<suggestionsLength; x++){
+                        incorrectWords.push(response.suggestions[x].word);
+                    }
+
+
+                    var suggestions = response.suggestions;
+                    
+                    console.log('wordsArray: ',wordsArray);
+                    //trigger the function to get the red lines show up or disappear
+                    getRedLines(incorrectWords);
+
+                    for(let z = 0; z < suggestionsLength; z++){                                    
+                        let originalWord = suggestions[z].word;                    
+                        let suggestionsForWordOne = suggestions[z].suggestions;                    
+                        document.getElementById(suggestions[z].word).onmousedown = function(event) {
+                            let suggestionsForWord = suggestions[z].suggestions                            
+                            if (event.which == 3) {                            
+                                $('#contextMenu').append('<ul id="wordList"></ul>');                                                       
+                                for(let u = 0; u < suggestionsForWord.length; u++){
+                                    let individualSuggestion = suggestionsForWord[u];
+                                    $('#wordList').append("<li onclick=\"changeWord('"+originalWord+"','"+individualSuggestion+"')\">"+individualSuggestion+'</li>');
+                                } 
+                                
+                            }
+                        }
+                    }
+
+                
+                 }
+            ).catch(function(error){
+                //TODO: work on an error response
+            })
+
+            
+            
+            
+        }
+
+        function changeWord (wordMisspelled, correction){
+            document.getElementById(wordMisspelled).textContent = correction + " ";
+            $('#'+wordMisspelled).removeClass('red_line').addClass('other');
+            $('#'+wordMisspelled).focusEnd();
+        }
+
+
+        /**
+         * The following code was researched from https://www.geeksforgeeks.org/how-to-add-a-custom-right-click-menu-to-a-webpage/
+         * Thanks to @devansh07 for writing the article that provided it.
+        */
+        document.onclick = hideMenu;
+        document.oncontextmenu = rightClick;
+  
+        function hideMenu() {
+            document.getElementById("contextMenu").style.display = "none"
+            document.getElementById("contextMenu").innerHTML = "";
+        }
+  
+        function rightClick(e) {
+            e.preventDefault();
+  
+            if (document.getElementById(
+                "contextMenu").style.display == "block")
+                hideMenu();
+            else {
+                var menu = document
+                    .getElementById("contextMenu")
+                      
+                menu.style.display = 'block';
+                menu.style.left = e.pageX + "px";
+                menu.style.top = e.pageY + "px";
+            }
         }
         
     </script>
