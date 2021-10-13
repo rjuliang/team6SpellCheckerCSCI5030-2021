@@ -46,7 +46,10 @@
             }
     */      
 
-            /*The following is the css properties of the custom right click menu*/
+            /**The following is the css properties of the custom right click menu
+            * This was researched from https://www.geeksforgeeks.org/how-to-add-a-custom-right-click-menu-to-a-webpage/
+            * Thanks to @devansh07 for writing the article that provided it.
+            */
             .context-menu {
                 position: absolute;
                 text-align: center;
@@ -212,6 +215,11 @@
             $('#'+wordMisspelled).focusEnd();
         }
 
+
+        /**
+         * The following code was researched from https://www.geeksforgeeks.org/how-to-add-a-custom-right-click-menu-to-a-webpage/
+         * Thanks to @devansh07 for writing the article that provided it.
+        */
         document.onclick = hideMenu;
         document.oncontextmenu = rightClick;
   
