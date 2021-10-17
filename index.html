@@ -6,8 +6,8 @@
             /*This applies to the entire page*/
             body{
                 font-family: Garamond, serif;;
-                background-color: rgb(126, 126, 126);
-                color: white;
+                background-color: rgb(249, 249, 249);
+                color:#525252;
             }
 
 
@@ -23,11 +23,11 @@
 
             /*These are the properties to add the border and height of the box*/
             #input{                
-                border: 1px solid rgb(95, 93, 93);              
-                border-width: 4px;
+                border: 2px solid rgb(95, 93, 93);              
                 height: 200px;
                 width: 80%; 
-                margin: auto;       
+                margin: auto;
+                padding: 20px;    
             }
             
             /*These are the properties to align the heading of the page*/
@@ -136,8 +136,13 @@
             var newHTML = "";
             $('#input').text().replace(/[\s]+/g, " ").trim().split(" ").forEach(function(val, idx){
             // If word is statement
+
+            //console.log('val', val);//.replace(/[^\w\s]/gi, '')
+
+            let newVal = val.replace(/[^\w\s]/gi, '')
+
             if (incorrectWords.indexOf(val.trim()) > -1)
-                newHTML += "<span id='"+val+"'class='red_line'>" + val + "&nbsp;</span>";
+                newHTML += "<span id='"+incorrectWords.indexOf(val.trim())+"'class='red_line'>" + val + "&nbsp;</span>";
             else
                 newHTML += ""+val+" "; 
             });
@@ -156,7 +161,7 @@
 
             //Third, we use the fetch method to call the localhost asynchronously (Synchronously was not recommended)
             //This is where we get the results from the index.js file
-            fetch("http://localhost:8080/check?spellText="+value, {
+            fetch("http://localhost:8080/spellCheck?text="+value, {
                 method: 'GET'
             }).then(prior =>  prior.json()).then(
                 final => {
@@ -178,24 +183,41 @@
 
                     var suggestions = response.suggestions;
                     
-                    console.log('wordsArray: ',wordsArray);
+                    //console.log('wordsArray: ',wordsArray);
+                    console.log('incorrectWords: ',incorrectWords);
                     //trigger the function to get the red lines show up or disappear
                     getRedLines(incorrectWords);
 
-                    for(let z = 0; z < suggestionsLength; z++){                                    
-                        let originalWord = suggestions[z].word;                    
-                        let suggestionsForWordOne = suggestions[z].suggestions;                    
-                        document.getElementById(suggestions[z].word).onmousedown = function(event) {
-                            let suggestionsForWord = suggestions[z].suggestions                            
-                            if (event.which == 3) {                            
-                                $('#contextMenu').append('<ul id="wordList"></ul>');                                                       
-                                for(let u = 0; u < suggestionsForWord.length; u++){
-                                    let individualSuggestion = suggestionsForWord[u];
-                                    $('#wordList').append("<li onclick=\"changeWord('"+originalWord+"','"+individualSuggestion+"')\">"+individualSuggestion+'</li>');
-                                } 
-                                
+                    //console.log('suggestions',suggestions);
+
+                    for(let z = 0; z < suggestionsLength; z++){ 
+                        
+                        // if(incorrectWords[z] == suggestions[z].word)
+                        //     console.log('true');
+                        let originalWord = suggestions[z].word; 
+                        let positionInArray = z; 
+                        //console.log(originalWord);          
+                        let suggestionsForWordOne = suggestions[z].suggestions;
+                        //let wordElement = document.getElementById(suggestions[z].word);
+                        let wordElement = document.getElementById(z);                    
+                        if(wordElement){
+                            wordElement.onmousedown = function(event) {
+                                let suggestionsForWord = suggestions[z].suggestions                            
+                                if (event.which == 3) {                            
+                                    $('#contextMenu').append('<ul id="wordList"></ul>');   
+                                    if(suggestionsForWord.length){
+                                        for(let u = 0; u < suggestionsForWord.length; u++){
+                                            let individualSuggestion = suggestionsForWord[u];
+                                            $('#wordList').append("<li onclick=\"changeWord('"+positionInArray+"','"+individualSuggestion+"')\">"+individualSuggestion+'</li>');
+                                        } 
+                                    } else {
+                                        $('#wordList').append("<li>No suggestions</li>")
+                                    }                                                                                                                     
+                                }
                             }
                         }
+                        
+                        
                     }
 
                 
@@ -210,7 +232,15 @@
         }
 
         function changeWord (wordMisspelled, correction){
-            document.getElementById(wordMisspelled).textContent = correction + " ";
+            
+            let wordLocation = document.getElementById(wordMisspelled)
+            let originalContent = wordLocation.textContent;
+            let trimmedtext = originalContent.trim();
+            let lastCharacter = trimmedtext.slice(-1);
+            let characters = /^[a-zA-Z0-9]+$/;
+            let addedCharacter = !characters.test(lastCharacter) ? lastCharacter : "";
+
+            document.getElementById(wordMisspelled).textContent = correction + addedCharacter +" ";
             $('#'+wordMisspelled).removeClass('red_line').addClass('other');
             $('#'+wordMisspelled).focusEnd();
         }
