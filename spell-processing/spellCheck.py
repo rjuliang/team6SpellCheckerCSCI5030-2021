@@ -19,9 +19,9 @@ def P(word, N=sum(WORDS.values())):
     "Probability of `word`."
     return WORDS[word] / N
 
-def correction(word): 
-    "Most probable spelling correction for word."
-    return max(candidates(word), key=P)
+#def correction(word): 
+#    "Most probable spelling correction for word."
+#   return max(candidates(word), key=P)
 
 def candidates(word): 
     "Generate possible spelling corrections for word."
@@ -45,6 +45,23 @@ def edits2(word):
     "All edits that are two edits away from `word`."
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
-
+def readTextFile(textFilename):
+    words = []
+    inputFile = open(textFilename, "r")
+    for line in inputFile:
+        wordsOnLine = line.strip().split()
+        for word in wordsOnLine:
+            words.append(word.strip(".,!\":;?").lower())
+    inputFile.close()
+    return words 
 "Added by Julian, prints the most probable correction. If word is correctly spelled, it shows same word"
-print(correction('misspelled'))
+textFile=input("enter  text file")
+textList=readTextFile(textFile)
+errorList=[]
+for word in textList: 
+    suggestion=candidates(word)
+    if word not in suggestion :
+        errorWord=(word+':'+str(suggestion))
+        errorList.append(errorWord)
+print(errorList)
+#print(correction('going'))
