@@ -23,7 +23,7 @@ function spellCheck(phrase, lng){
   let arrayPhrase = separate(phrase); 
   //console.log(arrayPhrase);
   // calls the dictionary from the typo-js library
-  let dictionary = new Typo("en_us");
+  let dictionary = new Typo(lng);
 
   //initialize arrays
   let misspelledWords = [];
@@ -35,12 +35,13 @@ function spellCheck(phrase, lng){
       let word = arrayPhrase[x].trim();
       if(word != null && word != ""){
         let lastCharacter = word.slice(-1);
-        let characters = /^[a-zA-Z0-9]+$/;
-        let wordWithoutLastCharacter = word;
+        let characters = /^[a-zA-Z0-9À-ÿ]+$/;
+        let wordWithoutLastCharacter = word.replace(/[{()}]/g, '');
+        //console.log(word);
         word = characters.test(lastCharacter) ? word: word.slice(0,-1);
-  
-        let is_spelled_correctly = dictionary.check(word);
-        let isNumber = numberRegex.test(word);
+        let wordToCheck = word.replace(/[{()}]/g, '');
+        let is_spelled_correctly = dictionary.check(wordToCheck);
+        let isNumber = numberRegex.test(wordToCheck);
         if(!is_spelled_correctly && !isNumber){
           //If the word is incorrect, we push it into the misspelledWords array
           misspelledWords.push(word);
@@ -69,7 +70,8 @@ app.get('/spellCheck', (req, res) => {
   //Assign the text to a constant
   const phrase = req.query.text;
   const lng = req.query.lng;
-  console.log(phrase);
+  console.log('Checking on:', lng);
+  console.log('Server phrase received:',phrase);
 
   //Reach out to the spellCheck function for an array of suggestions
   let suggestions = spellCheck(phrase, lng);
