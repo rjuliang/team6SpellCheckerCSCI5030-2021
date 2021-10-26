@@ -1,0 +1,77 @@
+/*This applies to the entire page*/
+body{
+    font-family: Garamond, serif;;
+    background-color: rgb(249, 249, 249);
+    color:#525252;
+}
+
+
+/*This is to underline the incorrect word*/
+.red_line{
+    text-decoration: underline;
+    text-decoration-color: red;
+    -webkit-text-decoration-style: wavy;
+    text-decoration-style: wavy;
+    /* -webkit-text-underline-position: under;
+    text-underline-position: under; */
+}
+
+/*These are the properties to add the border and height of the box*/
+#input{                
+    border: 2px solid rgb(95, 93, 93);              
+    height: 800px;
+    width: 80%; 
+    margin: auto;
+    padding: 20px;   
+    /*display: inline-block;*/
+}
+
+/*These are the properties to align the heading of the page*/
+.heading {
+    margin: auto;
+    padding-left: 150px;
+}
+
+/*These are the properties to set the style of the outline box
+.border {
+    margin: auto;
+    border-style:solid;
+    border-width: 5px;
+    width: 90%;
+    border-color: rgb(56, 54, 145);
+}
+*/      
+
+/**The following is the css properties of the custom right click menu
+* This was researched from https://www.geeksforgeeks.org/how-to-add-a-custom-right-click-menu-to-a-webpage/
+* Thanks to @devansh07 for writing the article that provided it.
+*/
+.context-menu {
+    position: absolute;
+    text-align: center;
+    background: #f9f6f6;
+    border: 1px solid #7e7e7e;
+    border-radius: 3px;
+}
+
+.context-menu ul {
+    padding: 0px;
+    margin: 0px;
+    min-width: 150px;
+    list-style: none;
+}
+
+.context-menu ul li {
+    padding-bottom: 7px;
+    padding-top: 7px;
+    cursor: pointer;
+}
+
+.context-menu ul li a {
+    text-decoration: none;
+    color: black;
+}
+
+.context-menu ul li:hover {
+    background: rgb(204, 204, 204);
+}
