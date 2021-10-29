@@ -2,12 +2,9 @@
 function sendText(text){
     //First, we define the value from the text, to allow better usage of variables
     var value = text;
-    console.log("value",value);
+    //console.log("value",value);
     //console.log('textContent ',document.getElementById("input").textContent);
-    //Then, we divide the words into an array 
-    var wordsArray = value.split(/\s/);
 
-   // var inputId = document.getElementById('input');
     var languageSelected = document.getElementById("languageSelection").value;
     var recordedCursorPosition = getCurrentCursorPosition('input');
 
@@ -37,7 +34,7 @@ function sendText(text){
 
             var suggestions = response.suggestions;
             
-            //console.log('wordsArray: ',wordsArray);
+            
             console.log('incorrectWords: ',incorrectWords);
             //trigger the function to get the red lines show up or disappear
             getRedLines(incorrectWords, recordedCursorPosition);
@@ -46,8 +43,6 @@ function sendText(text){
 
             for(let z = 0; z < suggestionsLength; z++){ 
                 
-                // if(incorrectWords[z] == suggestions[z].word)
-                //     console.log('true');
                 let originalWord = suggestions[z].word; 
                 let positionInArray = z; 
                 //console.log(originalWord);          
@@ -57,7 +52,7 @@ function sendText(text){
                 if(wordElement){
                     wordElement.onmousedown = function(event) {
                         let suggestionsForWord = suggestions[z].suggestions                            
-                        if (event.which == 3) {                            
+                        if (event.button == 2) {                            
                             $('#contextMenu').append('<ul id="wordList"></ul>');   
                             if(suggestionsForWord.length){
                                 for(let u = 0; u < suggestionsForWord.length; u++){
