@@ -11,7 +11,7 @@ MIT license: www.opensource.org/licenses/mit-license.php
 import re
 from collections import Counter
 
-def words(text): return re.findall(r'\w+', text.lower())
+def words(text): return re.findall(r'\w+', text)
 
 WORDS = Counter(words(open('bigText.txt').read()))
 
@@ -20,7 +20,7 @@ def P(word, N=sum(WORDS.values())):
     return WORDS[word] / N
 
 #def correction(word): 
-#    "Most probable spelling correction for word."
+#   "Most probable spelling correction for word."
 #   return max(candidates(word), key=P)
 
 def candidates(word): 
@@ -45,23 +45,22 @@ def edits2(word):
     "All edits that are two edits away from `word`."
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
-def readTextFile(textFilename):
-    words = []
-    inputFile = open(textFilename, "r")
-    for line in inputFile:
-        wordsOnLine = line.strip().split()
-        for word in wordsOnLine:
-            words.append(word.strip(".,!\":;?").lower())
-    inputFile.close()
-    return words 
 "Added by Julian, prints the most probable correction. If word is correctly spelled, it shows same word"
-textFile=input("enter  text file")
-textList=readTextFile(textFile)
-errorList=[]
-for word in textList: 
-    suggestion=candidates(word)
-    if word not in suggestion :
-        errorWord=(word+':'+str(suggestion))
-        errorList.append(errorWord)
-print(errorList)
-#print(correction('going'))
+
+def checkPhrase(phrase):
+    print(type(phrase))
+    textList = phrase.split()
+    errorList=[]
+    
+    print(textList)
+    for word in textList: 
+        print('word: '+word)
+        suggestions=candidates(word)
+        if word not in suggestions:
+            suggestionsArray = []
+            for suggestion in suggestions:
+                suggestionsArray.append(suggestion)
+            #errorWord= (word+':'+str(suggestion))
+            errorWord = {"word":word,"suggestions": suggestionsArray}
+            errorList.append(errorWord)
+    return errorList
