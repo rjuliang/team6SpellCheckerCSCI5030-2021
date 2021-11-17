@@ -40,7 +40,7 @@ def main():
     dictionaryFile = input("Please enter the dictionary file : ")
     textFile = input("Please enter the text file : ")
     dictionaryList = readDictionaryFile(dictionaryFile)
-    print(dictionaryList) 
+    #print(dictionaryList) 
     textList = readTextFile(textFile)
     errorList = findErrors(dictionaryList,textList)
     printErrors(errorList)
