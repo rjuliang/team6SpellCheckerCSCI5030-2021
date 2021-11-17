@@ -14,6 +14,8 @@ from collections import Counter
 def words(text): return re.findall(r'\w+', text)
 
 WORDS_ENGLISH = Counter(words(open('bigText.txt', encoding="UTF-8").read()))
+
+#Corpus with Irish files are not added to repo due to copyright
 WORDS_IRISH = Counter(words(open('legal.txt', encoding="UTF-8").read() + open('bible.txt', encoding="UTF-8").read() + open('news.txt', encoding="UTF-8").read() ))
 
 def P(word, N=sum(WORDS_IRISH.values())): 
