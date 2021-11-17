@@ -3,7 +3,7 @@ from collections import Counter
 from distances import edits1, edits2
 from wordRead import words
 
-WORDS = Counter(words(open('text.txt', encoding='utf8').read()))
+WORDS = Counter(words(open('IrishCorpus/bag_of_words.txt', encoding='utf8').read()))
 
 pairs =  set()
 
@@ -23,7 +23,7 @@ for word in WORDS:
                 if wordEdited2 != word:
                     pairs.add(word+","+wordEdited2)
 
-file=open('resultPairs1.txt','w', encoding="utf-8")
+file=open('IrishCorpus/irish_pairs.txt','w', encoding="utf-8")
 for pair in pairs:
     file.writelines(pair+'\n')
 file.close()

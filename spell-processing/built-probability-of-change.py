@@ -5,10 +5,11 @@ from collections import Counter
 from irishCorpus import corpus_text
 from wordRead import words
 
-pairsFile = open('resultPairs1.txt',encoding='UTF-8').read()
+pairsFile = open('IrishCorpus/irish_pairs.txt',encoding='UTF-8').read()
 singlePairs = []
 singlePairs = pairsFile.split('\n')
 
+#Be aware this code will not run properly as the text files for irishCorpus are not in the repo
 WORDS = Counter(words(corpus_text))
 
 print(singlePairs[0])
@@ -54,7 +55,7 @@ def myFunc(e):
 
 substitutions.sort(reverse=True, key=myFunc)
 
-file=open('subs2.txt','w', encoding="utf-8")
+file=open('IrishCorpus/irish_substitutions.txt','w', encoding="utf-8")
 for subs in substitutions:
     file.writelines(subs['change'] +" "+ str(subs['repetitions']) +'\n')
 file.close()
