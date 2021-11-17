@@ -13,27 +13,34 @@ from collections import Counter
 
 def words(text): return re.findall(r'\w+', text)
 
-WORDS = Counter(words(open('bigText.txt').read()))
+WORDS_ENGLISH = Counter(words(open('bigText.txt', encoding="UTF-8").read()))
 
-def P(word, N=sum(WORDS.values())): 
+#Corpus with Irish files are not added to repo due to copyright
+WORDS_IRISH = Counter(words(open('legal.txt', encoding="UTF-8").read() + open('bible.txt', encoding="UTF-8").read() + open('news.txt', encoding="UTF-8").read() ))
+
+def P(word, N=sum(WORDS_IRISH.values())): 
     "Probability of `word`."
-    return WORDS[word] / N
+    return WORDS_IRISH[word] / N
 
-#def correction(word): 
-#   "Most probable spelling correction for word."
-#   return max(candidates(word), key=P)
+def correction(word, lng):
+  "Most probable spelling correction for word."
+  return max(candidates(word, lng), key=P)
 
-def candidates(word): 
-    "Generate possible spelling corrections for word."
-    return (known([word]) or known(edits1(word)) or known(edits2(word)) or [word])
+def candidates(word, lng): 
+    "Generate possible spelling corrections for word."    
+    return (known([word], lng) or known(edits1(word), lng) or known(edits2(word), lng) or [word])
 
-def known(words): 
+def known(wordsToCheck, lng): 
     "The subset of `words` that appear in the dictionary of WORDS."
-    return set(w for w in words if w in WORDS)
+    if lng == "ga":
+        WORDS_LIST = WORDS_IRISH 
+    else: 
+        WORDS_LIST = WORDS_ENGLISH
+    return set(w for w in wordsToCheck if w in WORDS_LIST)
 
 def edits1(word):
     "All edits that are one edit away from `word`."
-    letters    = 'abcdefghijklmnopqrstuvwxyz'
+    letters    = 'áéíóúabcdefghijklmnopqrstuvwxyz'
     splits     = [(word[:i], word[i:])    for i in range(len(word) + 1)]
     deletes    = [L + R[1:]               for L, R in splits if R]
     transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R)>1]
@@ -45,17 +52,16 @@ def edits2(word):
     "All edits that are two edits away from `word`."
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
-"Added by Julian, prints the most probable correction. If word is correctly spelled, it shows same word"
 
-def checkPhrase(phrase):
-    print(type(phrase))
+def checkPhrase(phrase, lng):
+    #print(type(phrase))
     textList = phrase.split()
     errorList=[]
     
-    print(textList)
+    #print(textList)
     for word in textList: 
-        print('word: '+word)
-        suggestions=candidates(word)
+        #print('word: '+word)
+        suggestions=candidates(word, lng)
         if word not in suggestions:
             suggestionsArray = []
             for suggestion in suggestions:
@@ -64,3 +70,4 @@ def checkPhrase(phrase):
             errorWord = {"word":word,"suggestions": suggestionsArray}
             errorList.append(errorWord)
     return errorList
+

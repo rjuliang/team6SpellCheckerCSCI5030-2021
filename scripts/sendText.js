@@ -10,9 +10,12 @@ function sendText(text){
 
     console.log('cursor position:',getCurrentCursorPosition('input'));
 
+    var baseUrlEndpoint = "http://localhost:5000/process?"
+
     //Third, we use the fetch method to call the localhost asynchronously (Synchronously was not recommended)
     //This is where we get the results from the index.js file
-    fetch("http://localhost:8080/spellCheck?lng="+languageSelected+"&text="+value, {
+    //fetch("http://localhost:8080/spellCheck?lng="+languageSelected+"&text="+value, {
+    fetch( baseUrlEndpoint+ "lng=" + languageSelected+"&phrase="+value, {
         method: 'GET'
     }).then(prior =>  prior.json()).then(
         final => {
