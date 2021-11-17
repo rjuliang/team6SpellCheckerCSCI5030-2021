@@ -2,21 +2,29 @@
     <head>
         <title>SpellChecker</title>
         <link rel="stylesheet" type="text/css" href="stylesheets/main-style.css" />
+        <meta charset = "UTF-8">
     </head>
     <br>
     <body>
     <div class="border">
         <div class="heading">
             <br>
-            <h1>Spell Checker</h1>
-            <label>Select language: </label><br><br>
+            <div id="langDiv">
+                <label id="webLang">Select webpage language: </label>
+                <select id="languageSelection" onchange="changeLang()">
+                    <option value="en_us">English</option>
+                    <option value="ga">Irish</option>
+                </select>
+                </div>
+            <h1><div id="title">Spell Checker</div></h1>
+            <label id="textLang">Select language: </label><br><br>
             <select id="languageSelection">
                 <option value="en_us">English</option>
                 <option value="ga">Irish - Beta</option>
             </select>
             <br>
             <br>
-            <p size="5px"> Enter your text below:</p>
+            <div id="text" size="5px"> Enter your text below:</div>
         </div>
         <br>
         <!-- This is the new box we are using instead of the form -->
@@ -25,9 +33,11 @@
         <div id="contextMenu" class="context-menu" style="display:none"></div>
      </div>
     </body>       
+    
     <!--This is the script tag we call so our jQuery code works-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="scripts/onKey.js"></script>
+    <script src="scripts/pageLngSupport.js"></script>
     <script src="scripts/focusEndHelper.js"></script>
     <script src="scripts/redLines.js"></script>
     <script src="scripts/sendText.js"></script>

@@ -19,17 +19,26 @@ body{
 /*These are the properties to add the border and height of the box*/
 #input{                
     border: 2px solid rgb(95, 93, 93);              
-    height: 800px;
+    height: 400px;
     width: 80%; 
     margin: auto;
     padding: 20px;   
     /*display: inline-block;*/
 }
 
+
+
 /*These are the properties to align the heading of the page*/
 .heading {
     margin: auto;
     padding-left: 150px;
+}
+
+#langDiv
+{
+    padding-right: 120px;
+    text-align: right;
+    margin: auto;
 }
 
 /*These are the properties to set the style of the outline box
