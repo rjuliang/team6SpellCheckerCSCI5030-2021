@@ -1,6 +1,6 @@
 function changeLang() {
     var x="";
-    x = document.getElementById("languageSelection").value;
+    x = document.getElementById("pageLanguage").value;
     
     if(x=="ga")
     {
