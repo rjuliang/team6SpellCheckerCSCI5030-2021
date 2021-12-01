@@ -60,6 +60,8 @@ def checkPhrase(phrase, lng):
     
     #print(textList)
     for word in textList: 
+        word = re.sub('^[^a-zA-Záéíóú]','',word) 
+        word = re.sub('[^a-zA-Záéíóú]*$','',word)
         #print('word: '+word)
         suggestions=candidates(word, lng)
         if word not in suggestions:
