@@ -1,4 +1,8 @@
 /*This applies to the entire page*/
+*{
+    box-sizing: border-box;
+}
+
 body{
     font-family: Garamond, serif;;
     background-color: rgb(249, 249, 249);
@@ -20,10 +24,9 @@ body{
 #input{                
     border: 2px solid rgb(95, 93, 93);              
     height: 400px;
-    width: 80%; 
+    width: 90%; 
     margin: auto;
-    padding: 20px;   
-    /*display: inline-block;*/
+    padding: 20px;
 }
 
 
@@ -31,14 +34,17 @@ body{
 /*These are the properties to align the heading of the page*/
 .heading {
     margin: auto;
-    padding-left: 150px;
+    text-align: center;
 }
 
-#langDiv
-{
-    padding-right: 120px;
-    text-align: right;
-    margin: auto;
+hr{
+    color: #F0F0F0;
+    margin-bottom: 25px;
+    opacity: 0.3;
+}
+
+#langDiv {
+    opacity: 0.5;
 }
 
 /*These are the properties to set the style of the outline box
@@ -83,4 +89,28 @@ body{
 
 .context-menu ul li:hover {
     background: rgb(204, 204, 204);
+}
+/***************************************************/
+
+/*Responsiveness goes here*/
+@media screen and (min-width: 768px) {
+    .heading {
+        padding-left: 80px;        
+        text-align: left;
+        width: 80%;
+    }
+
+    #divider{
+        display: none;
+    }
+
+    #langDiv{
+        padding-right: 50px;
+        text-align: right;
+        opacity: 1;
+    }
+
+    #input{  
+        width: 80%;
+    }
 }
