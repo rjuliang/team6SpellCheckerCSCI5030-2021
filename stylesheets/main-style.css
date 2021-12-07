@@ -5,8 +5,9 @@
 
 body{
     font-family: Garamond, serif;;
-    background-color: rgb(249, 249, 249);
-    color:#525252;
+    background-color: rgb(235, 235, 235);
+    color:#300066;
+    font-weight: bold;
 }
 
 
@@ -27,9 +28,23 @@ body{
     width: 90%; 
     margin: auto;
     padding: 20px;
+    
 }
 
-
+#button1
+{
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 4px;
+    padding-bottom: 3px;
+    margin-left: 140px;
+    position: absolute;
+    background-color: #300066;
+    color: white;
+    border-color: rgb(128, 128, 128);
+    border-radius: 5px;
+    
+}
 
 /*These are the properties to align the heading of the page*/
 .heading {
@@ -43,10 +58,43 @@ hr{
     opacity: 0.3;
 }
 
-#langDiv {
-    opacity: 0.5;
+
+#langDiv
+{
+    padding-right: 80px;
+    text-align: right;
+    margin: auto;
+    
 }
 
+#languageSelection{
+    background-color: #300066;
+    color: white;
+    padding-left: 10px;
+    padding-right: 20px;
+    position: absolute;
+    border-color: rgb(128, 128, 128);
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1.9;
+    height: 23px;
+}
+
+#pageLanguage{
+    background-color: #300066;
+    color: white;
+    height: 18;
+    width: 80;
+    font-size: 12;
+    margin-top: 2;
+    margin-left: 10;
+    position: absolute;
+    border-color: rgb(128, 128, 128);
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1.5;
+    padding-left: 5px;
+}
 /*These are the properties to set the style of the outline box
 .border {
     margin: auto;
@@ -95,7 +143,7 @@ hr{
 /*Responsiveness goes here*/
 @media screen and (min-width: 768px) {
     .heading {
-        padding-left: 80px;        
+        padding-left: 10px;        
         text-align: left;
         width: 80%;
     }
@@ -104,13 +152,7 @@ hr{
         display: none;
     }
 
-    #langDiv{
-        padding-right: 50px;
-        text-align: right;
-        opacity: 1;
-    }
+   
 
-    #input{  
-        width: 80%;
-    }
+  
 }
