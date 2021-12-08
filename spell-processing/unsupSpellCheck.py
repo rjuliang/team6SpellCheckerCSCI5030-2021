@@ -5,11 +5,13 @@ from distances import addSingleCharacter, deleteSingleCharacter, edits1
 from irishCorpus import corpus_text
 from wordRead import words
 
+
+#needs corpus files in same folder
 WORDS = Counter(words(corpus_text))
 
 #word = 'atmaiféar'
 
-errorModel = open('IrishCorpus/irish_substitutions.txt',encoding="UTF-8").readlines()
+errorModel = open('IrishCorpus/irish_subs_2.txt',encoding="UTF-8").readlines()
 
 #print('Count of ', word,":",WORDS[word])
 
@@ -100,7 +102,7 @@ def checkIrishWordUnsupervised(word):
     else:
         return word_dict
 
-checkIrishWordUnsupervised('bliain')
+checkIrishWordUnsupervised('athrú')
 
 
 def oneUnsupervisedCorrection(checkingWord):
