@@ -28,7 +28,7 @@ def correction(word, lng):
 
 def candidates(word, lng): 
     "Generate possible spelling corrections for word."    
-    return (known([word], lng) or known(edits1(word), lng) or known(edits2(word), lng) or [word])
+    return (known([word], lng) or known(edits1(word, lng), lng) or known(edits2(word, lng), lng) or [word])
 
 def known(wordsToCheck, lng): 
     "The subset of `words` that appear in the dictionary of WORDS."
@@ -38,9 +38,14 @@ def known(wordsToCheck, lng):
         WORDS_LIST = WORDS_ENGLISH
     return set(w for w in wordsToCheck if w in WORDS_LIST)
 
-def edits1(word):
+def edits1(word, lng):
     "All edits that are one edit away from `word`."
-    letters    = 'áéíóúabcdefghijklmnopqrstuvwxyz'
+    letters    = 'abcdefghijklmnopqrstuvwxyz'
+
+    if lng == "ga":
+        #print('checking Irish characters...')
+        letters += "ÁḂĊḊÉḞĠÍṀÓṖṠṪÚáḃċḋéḟġíṁóṗṡṫú"
+
     splits     = [(word[:i], word[i:])    for i in range(len(word) + 1)]
     deletes    = [L + R[1:]               for L, R in splits if R]
     transposes = [L + R[1] + R[0] + R[2:] for L, R in splits if len(R)>1]
@@ -48,9 +53,9 @@ def edits1(word):
     inserts    = [L + c + R               for L, R in splits for c in letters]
     return set(deletes + transposes + replaces + inserts)
 
-def edits2(word): 
+def edits2(word, lng): 
     "All edits that are two edits away from `word`."
-    return (e2 for e1 in edits1(word) for e2 in edits1(e1))
+    return (e2 for e1 in edits1(word, lng) for e2 in edits1(e1, lng))
 
 
 def checkPhrase(phrase, lng):
@@ -60,8 +65,8 @@ def checkPhrase(phrase, lng):
     
     #print(textList)
     for word in textList: 
-        word = re.sub('^[^a-zA-Záéíóú]','',word) 
-        word = re.sub('[^a-zA-Záéíóú]*$','',word)
+        word = re.sub('^[^a-zA-ZáéíóúÀ-ÿ]','',word) 
+        word = re.sub('[^a-zA-ZáéíóúÀ-ÿ]*$','',word)
         #print('word: '+word)
         suggestions=candidates(word, lng)
         if word not in suggestions:

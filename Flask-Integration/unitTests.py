@@ -17,7 +17,7 @@ def unitTests():
             for word in line.split():         
                 INPUT_WORDS.append(word)
     
-    with open('input_test_team6.tsv', 'w', encoding="UTF-8", newline='') as out_file:
+    with open('input_test_team6-1.tsv', 'w', encoding="UTF-8", newline='') as out_file:
         tsv_writer = csv.writer(out_file, delimiter="\t")
 
         for word in INPUT_WORDS:
