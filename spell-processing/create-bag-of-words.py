@@ -37,7 +37,7 @@ for sentence in corpus:
             wordfreq[token] += 1
 
 
-most_freq = heapq.nlargest(10200, wordfreq, key=wordfreq.get)
+most_freq = heapq.nlargest(21000, wordfreq, key=wordfreq.get)
 
 arranged = set()
 

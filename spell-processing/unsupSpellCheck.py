@@ -1,48 +1,38 @@
-#athrú - correct
-#athru 
+import re
 from collections import Counter
 from distances import addSingleCharacter, deleteSingleCharacter, edits1
 from irishCorpus import corpus_text
 from wordRead import words
 
+#file not added to repo due to copyright
+corpus_text_lngMdl = open('irish_corpus_file.txt', encoding='UTF-8').readlines()
 
-#needs corpus files in same folder
 WORDS = Counter(words(corpus_text))
 
-#word = 'atmaiféar'
+errorModel = open('IrishCorpus/irish_substitutions.txt',encoding="UTF-8").readlines()
 
-errorModel = open('IrishCorpus/irish_subs_2.txt',encoding="UTF-8").readlines()
-
-#print('Count of ', word,":",WORDS[word])
 
 def countTwoWords(word1, word2):
     return WORDS[word1] + WORDS[word2]
 
-#results = []
 
 word_results = set()
 
 word_dict = {}
 
 def findProbability(wordGroup, word):
-    #main_results = []
+
     for wordOption in wordGroup:
         if wordOption in WORDS:
-            # countOftargetWord = str(WORDS[wordOption])
-            # countoftwoWords = str(countTwoWords(word, wordOption))
             probabilityOfWords =  WORDS[wordOption] / countTwoWords(word, wordOption)
-            #main_results.append( wordOption + ": "+countOftargetWord + "/" + countoftwoWords + "=" + str(probabilityOfWords))
-            if probabilityOfWords > 0.00011:
+            
+            if probabilityOfWords > 0.2:
                 word_dict[wordOption] = probabilityOfWords
 
-    # if len(main_results) > 0:
-    #     return main_results
-    # else:
-    #     return
 
 def checkIrishWordUnsupervised(word):
     
-    #print('word1',word)
+    
     for character in word:
         for line in errorModel:
             fullError = line.split('|')
@@ -56,7 +46,7 @@ def checkIrishWordUnsupervised(word):
                 insertedCharacterWords = addSingleCharacter(word, character)
                 checkProbability = findProbability(insertedCharacterWords, word)
                 if len(insertedCharacterWords) > 0 and checkProbability is not None:
-                    #results.append(checkProbability)
+                    
                     for item in checkProbability:
                         word_results.add(item)
         
@@ -67,7 +57,7 @@ def checkIrishWordUnsupervised(word):
                 checkProbability = findProbability(alteredWords, word)
 
                 if len(alteredWords) > 0  and checkProbability is not None:
-                    #results.append(checkProbability)
+                    
                     for item in checkProbability:
                         word_results.add(item)
 
@@ -75,48 +65,97 @@ def checkIrishWordUnsupervised(word):
                 deletedCharacterWords = deleteSingleCharacter(word)
                 checkProbability = findProbability(deletedCharacterWords, word)
                 if len(alteredWords) > 0 and checkProbability is not None:
-                    #results.append(checkProbability)
+                    
                     for item in checkProbability:
                         word_results.add(item)                
 
 
-    # print(results)
-    # print(results[5])
-
-    #print(word_results)
-    #print(word_dict)
 
     if len(word_dict) > 0:
         sortedWords = sorted(word_dict.items(), key=lambda kv: kv[1], reverse=True)
 
-        #print(dict(sortedWords))
+        
         
         final_words = dict(sortedWords)
         suggestions = []
 
         for correction in final_words:
-            #print(correction ,":", final_words[correction])
             suggestions.append(correction)
 
         return final_words
     else:
         return word_dict
 
-checkIrishWordUnsupervised('athrú')
 
 
-def oneUnsupervisedCorrection(checkingWord):
-    #print(checkingWord)
+
+def oneUnsupervisedCorrection(checkingWord, beforeWord, afterWord):
     correctionSet = checkIrishWordUnsupervised(checkingWord)
     corrections = list(correctionSet)
     word_dict.clear()
-    if len(corrections) > 0:
-        if checkingWord != corrections[0]:
-            #print(corrections[0])
-            return corrections[0]
-        else:
-            return checkingWord
-    else:
-        return checkingWord
+    phraseStatistics = {}
 
-#print(oneUnsupervisedCorrection('hAmasóine'))
+    if beforeWord == "" and afterWord == "":
+            if len(corrections) > 0:
+                if checkingWord != corrections[0]:
+                    
+                    return corrections[0]
+                else:
+                    return checkingWord
+            else:
+                return checkingWord
+    else:
+        correctionIndex = 0 
+        for option in corrections:            
+
+            if beforeWord == "":
+                phrase = option + " " + afterWord
+            elif afterWord == "":
+                phrase = beforeWord + " "+ option
+            else:
+                phrase = beforeWord + " "+ option + " " + afterWord
+
+            phraseStatistics[option] = timesStringPresent(phrase)
+
+            if correctionIndex == 1:                
+                break
+
+            correctionIndex = correctionIndex + 1
+        
+        if checkingWord not in phraseStatistics:
+            if beforeWord == "":
+                original_phrase = checkingWord + " " + afterWord
+            elif afterWord == "":
+                original_phrase = beforeWord + " "+ checkingWord
+            else:
+                original_phrase = beforeWord + " "+ checkingWord + " " + afterWord
+
+            phraseStatistics[checkingWord] = timesStringPresent(original_phrase)
+
+        if len(phraseStatistics) > 0:
+            sortedPhraseCorrections = sorted(phraseStatistics.items(), key=lambda kv: kv[1], reverse=True)
+        
+            dictOfCorrections = dict(sortedPhraseCorrections)
+            final_phrases_options = list(dictOfCorrections)
+            phraseStatistics.clear()
+            if dictOfCorrections[final_phrases_options[0]] > 0:
+                return final_phrases_options[0]
+            else:
+                return checkingWord
+    
+
+
+def searchPhrase(phrase, line):
+    return re.search(r'\b' + phrase + r'\b', line)
+
+def timesStringPresent(trio):
+    times = 0
+    index = 0
+    for line in corpus_text_lngMdl:  
+
+        index += 1 
+
+        if trio in line:
+            times += 1
+    
+    return times
